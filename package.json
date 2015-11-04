@@ -1,0 +1,43 @@
+{
+  "name": "ohmygraph",
+  "version": "1.0.1",
+  "description": "Isomorphic REST server and clients using jsonschema graph. Forget writing rest-interface gluecode, welcome json graph.",
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "^1.3.3",
+    "json-ref-lite":"^1.0.68",
+    "querystring": "^0.2.0",
+    "whatwg-fetch": "^0.10.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "browser": "/bin/bash -c 'coffee -c *.coffee test/*.coffee && browserify -r .:ohmygraph | uglifyjs -o ohmygraph.min.js'",
+    "browserfull": "/bin/bash -c 'coffee -c *.coffee test/*.coffee && browserify -r .:ohmygraph > ohmygraph.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://coderofsalvation@github.com/coderofsalvation/ohmygraph.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coderofsalvation/ohmygraph/issues"
+  },
+  "browser": {
+    "node-fetch": "whatwg-fetch",
+    "fs": false
+  },
+  "keywords": [
+    "jsonschema",
+    "isomorphic",
+    "server",
+    "client",
+    "rest graph",
+    "jsonpointer",
+    "$ref",
+    "autobind",
+    "circular",
+    "graph"
+  ],
+  "homepage": "https://github.com/coderofsalvation/ohmygraph"
+}
