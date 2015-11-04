@@ -29,10 +29,7 @@ or in the browser (6k when gzipped):
             data: "{response.items}"
       repository:
         type: "object"
-        properties:
-          id: { type:"number", default: 12 }
-          name: { type: "string", default: 'John Doe' }
-          category: { type: "string", default: 'amsterdam' }
+        properties: { ..... }
         data: {}
         request:
           get:
@@ -45,13 +42,9 @@ or in the browser (6k when gzipped):
             type: "request"
             config:
               method: "post"
-              url: '/book'
+              url: '/repos/{repository.data.full_name}'
               payload:
-                'fullname': '{book.name}'
-                'firstname': '{firstname}'
-                'category': '{book.category}'
-              schema: {"$ref":"#/book"}
-            data: "{response}"
+                'full_name': '{repository.data.full_name}'
 
 
     omg = ohmygraph.create graph, {baseurl: "https://api.github.com",verbose:2}
