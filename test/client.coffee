@@ -54,8 +54,8 @@ client.repository.on 'data', (repository) ->
   console.log "on repository"
   console.dir repository
 
-#client.repositories.get()
-client.repositories.get {q:"foo"}
+client.repositories.get()
+#client.repositories.get {q:"foo"}
 
 
 #omg.graph.repository.data.get (data) ->

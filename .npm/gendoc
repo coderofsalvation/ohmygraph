@@ -1,0 +1,11 @@
+#!/bin/bash 
+SELF_DIR="$(dirname "$(readlink -f "$0")" )"
+TMP=/tmp/.npm.txt
+
+get_funcs(){
+  grep -A1 '^[ ]\+\# ' $SELF_DIR/../index.coffee | sed 's/^[ ]\+//g;s/ =[ ]\+(/(/g;s/ [-=]>.*//g;s/@\.//g;s/: //g;s/ (/(/g' > $TMP
+  tac $TMP | sed 's/\# /> /g;s/--//g;s/node\./yournode./g'
+  rm $TMP 
+}
+
+get_funcs

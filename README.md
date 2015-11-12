@@ -1,4 +1,4 @@
-<img alt="" src="http://www.flamingtext.com/net-fu/proxy_form.cgi?imageoutput=true&script=fabulous-logo&text=ohmygraph!"/>
+<center><img src="https://raw.githubusercontent.com/coderofsalvation/ohmygraph/master/.npm/logo.png" width="40%"/></center>
 
 # Usage:
 
@@ -62,3 +62,39 @@ or in the browser (6k when gzipped):
     # lets request data!
     client.repositories.get()
     client.repositories.get {q:"foo"}
+
+# Api 
+
+init.client()
+> init client from created graph(after create())
+
+get(node)
+> get node with name x
+
+graph = jref.resolve graph
+> access your resolved graph here
+
+clone(obj)
+> deep clone object utility function
+
+onWarning(err)
+> customizable warning function
+
+onError()
+> customizable error/catch function
+
+create(graph,opts)
+> create and resolve graph
+
+yournode.bindrequests(node)
+> autobind client requesthandlers on node
+
+yournode.trigger(event,data)
+> trigger an event on your nodeyournode.trigger('foo',{data:'bar'})
+
+yournode.on(event,cb)
+> register an event on your nodeyournode.on( 'foo', function(){} )
+
+yournode.clone   ()
+> call clone() on a node to keep the original intact 
+

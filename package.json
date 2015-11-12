@@ -1,6 +1,6 @@
 {
   "name": "ohmygraph",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Isomorphic REST server and clients using jsonschema graph. Forget writing rest-interface gluecode, welcome json graph.",
   "main": "index.js",
   "dependencies": {
