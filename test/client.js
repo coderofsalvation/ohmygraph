@@ -83,6 +83,10 @@
     verbose: 2
   });
 
+  console.log(omg.export_functions());
+
+  process.exit();
+
   omg.init.client();
 
   client = omg.graph;

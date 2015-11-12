@@ -108,6 +108,16 @@ module.exports = {
             node[methodtype] = node.requestor[methodtype] # shortcut functions
 
       node.bindrequests(node)
+      
+    @.export_functions = () ->
+      str = ''
+      for name,node of omg.graph
+        if node.request?
+          for k,v of node.request
+            if v.config?
+              str += name+"."+k+"()\n"
+      return str
+
 
     @.init = {}
 

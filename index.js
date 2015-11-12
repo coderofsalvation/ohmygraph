@@ -186,6 +186,24 @@
         };
         return node.bindrequests(node);
       };
+      this.export_functions = function() {
+        var k, name, node, ref, ref1, str, v;
+        str = '';
+        ref = omg.graph;
+        for (name in ref) {
+          node = ref[name];
+          if (node.request != null) {
+            ref1 = node.request;
+            for (k in ref1) {
+              v = ref1[k];
+              if (v.config != null) {
+                str += name + "." + k + "()\n";
+              }
+            }
+          }
+        }
+        return str;
+      };
       this.init = {};
       this.init.client = function() {
         var node, nodename, results;
