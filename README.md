@@ -85,10 +85,9 @@ Try the [online editor](http://coderofsalvation.github.io/ohmygraph/index.html)
 # Example: patching/extending api-calls
 
 Sometimes an jsonmodel needs to be patched.
-Luckily, [json-ref-lite](https://www.npmjs.com/package/json-ref-lite)'s "$extend" keys are automatically parsed.
+Luckily, [json-ref-lite](https://www.npmjs.com/package/json-ref-lite#example-json-inheritance-extensions)'s "$extend" keys are automatically parsed.
 
 # Api 
-
 
 graph = graph
 > access your resolved graph here
