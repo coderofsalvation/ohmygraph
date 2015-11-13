@@ -12,6 +12,12 @@
     jref: jref,
     create: function(graph, opts) {
       var omg;
+      if (graph == null) {
+        graph = {};
+      }
+      if (opts == null) {
+        opts = {};
+      }
       this.jref = jref;
       this.opts = opts;
       this.opts.verbose = this.opts.verbose || 0;
@@ -42,7 +48,7 @@
         }
         return temp;
       };
-      this.graph = this.jref.resolve(graph);
+      this.graph = graph;
       this.get = function(node) {
         if (!this.graph[node] || (this.graph[node].properties == null)) {
           return this.onError({
@@ -186,7 +192,7 @@
         };
         return node.bindrequests(node);
       };
-      this.export_functions = function() {
+      this.export_functions = function(return_array_boolean) {
         var k, name, node, ref, ref1, str, v;
         str = '';
         ref = omg.graph;
@@ -202,11 +208,23 @@
             }
           }
         }
-        return str;
+        if (return_array_boolean) {
+          return str.replace(/()\n/g, "\n").split("\n");
+        } else {
+          return str;
+        }
+      };
+      this.resolve = function() {
+        return omg.graph = omg.jref.resolve(omg.graph);
+      };
+      this.extend = function() {
+        return omg.jref.extend(omg.graph);
       };
       this.init = {};
       this.init.client = function() {
         var node, nodename, results;
+        omg.extend();
+        omg.resolve();
         graph = omg.graph;
         results = [];
         for (nodename in graph) {

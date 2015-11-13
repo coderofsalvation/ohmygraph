@@ -6,8 +6,8 @@ module.exports = {
     
   jref: jref
 
-  # create and resolve graph
-  create: (graph,opts) ->
+  # create graph
+  create: (graph = {},opts = {}) ->
     @.jref = jref
 
     @.opts = opts
@@ -35,7 +35,7 @@ module.exports = {
       temp
 
     # access your resolved graph here
-    @.graph = @.jref.resolve graph
+    @.graph = graph
 
     # get node with name x
     @.get  = (node) -> 
@@ -108,21 +108,33 @@ module.exports = {
             node[methodtype] = node.requestor[methodtype] # shortcut functions
 
       node.bindrequests(node)
-      
-    @.export_functions = () ->
+
+    # dump client functions as string or array
+    @.export_functions = (return_array_boolean) ->
       str = ''
       for name,node of omg.graph
         if node.request?
           for k,v of node.request
             if v.config?
               str += name+"."+k+"()\n"
-      return str
+      if return_array_boolean
+        return str.replace( /()\n/g, "\n").split("\n")
+      else return str
 
+    # resolve "$ref" references in graph
+    @.resolve = () ->
+      omg.graph = omg.jref.resolve omg.graph
+
+    # extend "$extend" keys in graph
+    @.extend = () ->
+      omg.jref.extend omg.graph
 
     @.init = {}
 
-    # init client from created graph (after create())
+    # generate client functions from graph (after create())
     @.init.client = () ->
+      omg.extend()
+      omg.resolve()
       graph = omg.graph
       for nodename,node of graph
         ( (nodename,node) ->

@@ -71,16 +71,56 @@ Try the [online editor](http://coderofsalvation.github.io/ohmygraph/index.html)
 * easy to use with API's generated from json-model (just convert the model)
 * only deal with dataobjects in javascript, not with REST code
 
+# Example: combining API's
+
+    api_one = {..}
+    api_two = {..}
+
+    omg = ohmygraph.create();
+    omg.graph = api_one;
+    for (k in api_two) omg.graph[k] = api_two[k];
+
+    omg.init.client();
+
+# Example: patching/extending api-calls
+
+Sometimes an jsonmodel needs to be patched.
+Luckily, [json-ref-lite](https://www.npmjs.com/package/json-ref-lite)'s "$extend" keys are automatically parsed.
+
 # Api 
 
+
+graph = graph
+> access your resolved graph here
+
+create(graph = {},opts = {})
+> create graph
+
 init.client()
-> init client from created graph(after create())
+> generate client functions from graph(after create())
+
+extend()
+> extend "$extend" keys in graph
+
+resolve()
+> resolve "$ref" references in graph
+
+export_functions(return_array_boolean)
+> dump client functions as string or array
+
+yournode.bindrequests(node)
+> autobind client requesthandlers on node
+
+yournode.trigger(event,data)
+> trigger an event on your nodeyournode.trigger('foo',{data:'bar'})
+yournode.on(event,cb)
+> register an event on your nodeyournode.on( 'foo', function(){} )
+
+yournode.clone   ()
+> call clone() on a node to keep the original intact 
 
 get(node)
 > get node with name x
-
-graph = jref.resolve graph
-> access your resolved graph here
 
 clone(obj)
 > deep clone object utility function
@@ -91,23 +131,9 @@ onWarning(err)
 onError()
 > customizable error/catch function
 
-create(graph,opts)
-> create and resolve graph
-
-yournode.bindrequests(node)
-> autobind client requesthandlers on node
-
-yournode.trigger(event,data)
-> trigger an event on your nodeyournode.trigger('foo',{data:'bar'})
-
-yournode.on(event,cb)
-> register an event on your nodeyournode.on( 'foo', function(){} )
-
-yournode.clone   ()
-> call clone() on a node to keep the original intact 
-
 # Inspired by
 
+This work was inspired by the thought that linking of resources could happen on a json model-level, instead of only on a RESTful level (interpreting links from responses).
 Ohmygraph is pretty much jsonbased and framework- and API-agnostic, but it was inspired by:
 
 [backbone/exoskeleton](http://backbonejs.org)
