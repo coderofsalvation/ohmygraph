@@ -44,18 +44,44 @@
     div#adapter { width:300px; float:left }
     img#logo { float:left; width:44%; }
     button,select { font-size:17px; }
-    span#description{ text-align:justify; color:#FFF; font-size:14px; }
+    .description{ text-align:justify; color:#FFF; font-size:14px; }
     a:visited { font-weight:bold; color:#FFF }
+    #advanced input { width:50px }
+    fieldset#advanced { background-color:#999; margin-top:1.0em; }
   </style>
+  <script>
+
+    templates = [];
+    templates["none"] = {
+      "json": '{\n\n}',
+      "adapter":"none",
+      "extra": ""
+    }
+    templates["github"] = {
+      "json": '{\n  "repositories": {\n    "output": [\n      {\n        "$ref": "#ui.console"\n      }\n    ],\n    "type": "array",\n    "items": [\n      {\n        "$ref": "#repository"\n      }\n    ],\n    "input": {\n      "order": {\n        "type": "string",\n        "enum": [\n          "asc",\n          "desc"\n        ],\n        "value": "asc"\n      },\n      "sort": {\n        "type": "string",\n        "enum": [\n          "created",\n          "stars",\n          "updated",\n          "pushed"\n        ],\n        "value": "stars"\n      },\n      "q": {\n        "type": "string",\n        "value": "ohmygod"\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/search/repositories",\n          "payload": {\n            "q": "{repositories.input.q.value}",\n            "sort": "{repositories.input.sort.value}",\n            "order": "{repositories.input.order.value}"\n          }\n        },\n        "data": "{response.items}"\n      }\n    }\n  },\n  "repository": {\n    "type": "object",\n    "data": {},\n    "properties": {\n      "html_url": {\n        "type": "string"\n      },\n      "stargazers_count": {\n        "type": "number"\n      },\n      "owner": {\n        "type": "object",\n        "properties": {\n          "login": {\n            "type": "string"\n          }\n        }\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/repos/{repository.data.full_name}",\n          "payload": {}\n        },\n        "data": "{response}"\n      },\n      "post": {\n        "type": "request",\n        "config": {\n          "method": "post",\n          "url": "/repos/{repository.data.full_name}",\n          "payload": {\n            "full_name": "{repository.data.full_name}"\n          }\n        }\n      }\n    }\n  }\n}',
+      "adapter": "none",
+      "extra": "//\n// just try the above calls in your browser console, like:\n//\n//   repositories = omg.graph.repositories;\n//   repositories.get() // <- returns array of 'repository' objects..sweet!\n//\n// also you can pass payloads like this:\n//\n//    repositories.get({sort:'asc'})\n// or using variable binding like this:\n//\n//    &lt;form onsubmit=\"repositories.get()\"&gt;\n//      &lt;input onchange=\"repositories.data.q = this.value\"/&gt;\n//    &lt;/form&gt;\n\n"
+    }
+    templates["githubextend"] = {
+      "json": '{\n  "$extend":{\n    "$ref":"#/repository/request",\n    "update": {\n      "config": {\n        "method": "put",\n        "url": "https://api.github.com/search/repositories",\n        "payload": {\n          "foo": "{repositories.input.q.value}"\n        }\n      },\n      "data": "{response.items}"\n    }\n  },\n  "repositories": {\n    "output": [\n      {\n        "$ref": "#ui.console"\n      }\n    ],\n    "type": "array",\n    "items": [\n      {\n        "$ref": "#repository"\n      }\n    ],\n    "input": {\n      "order": {\n        "type": "string",\n        "enum": [\n          "asc",\n          "desc"\n        ],\n        "value": "asc"\n      },\n      "sort": {\n        "type": "string",\n        "enum": [\n          "created",\n          "stars",\n          "updated",\n          "pushed"\n        ],\n        "value": "stars"\n      },\n      "q": {\n        "type": "string",\n        "value": "ohmygod"\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/search/repositories",\n          "payload": {\n            "q": "{repositories.input.q.value}",\n            "sort": "{repositories.input.sort.value}",\n            "order": "{repositories.input.order.value}"\n          }\n        },\n        "data": "{response.items}"\n      }\n    }\n  },\n  "repository": {\n    "type": "object",\n    "data": {},\n    "properties": {\n      "html_url": {\n        "type": "string"\n      },\n      "stargazers_count": {\n        "type": "number"\n      },\n      "owner": {\n        "type": "object",\n        "properties": {\n          "login": {\n            "type": "string"\n          }\n        }\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/repos/{repository.data.full_name}",\n          "payload": {}\n        },\n        "data": "{response}"\n      },\n      "post": {\n        "type": "request",\n        "config": {\n          "method": "post",\n          "url": "/repos/{repository.data.full_name}",\n          "payload": {\n            "full_name": "{repository.data.full_name}"\n          }\n        }\n      }\n    }\n  }\n}\n',
+      "adapter": "none",
+      "extra": "// do you see that the 'foo'-key was moved downwards?"
+    }
+    templates["madeapi"] = {
+      "json": '{\n  "kind": "structure",\n  "structure": {\n    "user": {\n      "table": "user",\n      "access": [\n        "read",\n        "update"\n      ],\n      "custom": {\n        "current": {\n          "read": {\n            "description": "Get current session user",\n            "method": "\\\\Foo\\\\Some\\\\Method\\\\current"\n          }\n        }\n      },\n      "required": [\n        "username"\n      ],\n      "payload": {\n        "id": {\n          "type": "integer",\n          "minimum": 1\n        },\n        "username": {\n          "type": "string",\n          "access": [\n            "create",\n            "read"\n          ]\n        }\n      },\n      "relations": {\n        "access": {\n          "resource": "access",\n          "local": "id",\n          "foreign": "user_id"\n        }\n      }\n    },\n    "access": {\n      "table": "user_access",\n      "access": [\n        "read"\n      ],\n      "required": [\n        "user",\n        "resource",\n        "foreign_id"\n      ],\n      "payload": {\n        "id": {\n          "title": {\n            "en": "id",\n            "nl": "id"\n          },\n          "description": "Identificatie nummer",\n          "function": "key",\n          "type": "integer",\n          "minimum": 1\n        },\n        "user": {\n          "description": "Gebruiker",\n          "type": "object",\n          "function": "relation",\n          "resource": "user"\n        },\n        "resource": {\n          "type": "string"\n        }\n      },\n      "relations": {\n        "user": {\n          "resource": "user",\n          "local": "user_id",\n          "foreign": "id"\n        }\n      }\n    }\n  }\n}',
+      "extra": "",
+      "adapter": "madeapi"
+    }
+    
+  </script>
 </head>
 <body>
   <script type="text/javascript" src="ohmygraph.min.js"></script>
-  <script type="text/javascript" src="node_modules/ohmygraph-madeapi-adapter/ohmygraph-madeapi-adapter.min.js"></script>
+  <script type="text/javascript" src="adapter/ohmygraph-madeapi-adapter.min.js"></script>
   <div>
     <img src="https://raw.githubusercontent.com/coderofsalvation/ohmygraph/master/.npm/logo.png" id="logo"/>
-    <span id="description">
-      <a href="https://www.npmjs.com/package/ohmygraph" target="_blank">OHMYGRAPH!</a> is a javascript library and jsonformat to write less REST-code.
-      Have your servers and clients communicate using a shared jsonschema graph. Forget writing rest-interface gluecode, welcome json graph.
+    <span class="description">
+      <b><a href="https://www.npmjs.com/package/ohmygraph" target="_blank">OHMYGRAPH!</a> look at those REST muscles!</b><br>OMG turns relational json models into a graphs/REST-clients. Result: no more JS / REST-gluecode for setting up relationships. Stop thinking json tree-configs & REST-calls, start thinking graph relations, combine multiple api's into one graph.
     </span>
   </div>
   <div class="right">
@@ -67,20 +93,67 @@
             <b>Adapter</b>&nbsp:&nbsp;
           </td>
           <td>
-            <select>
-              <option value="">none</option>
-              <option value="">madeapi json</option>
+            <select id="adapterselect" onchange="parse()">
+              <option value="none">none</option>
+              <option value="madeapi">madeapi json</option>
             </select>
+          </td>
+          <td>
+            <button onclick="var a = $('#advanced'); a.style.display = ( a.style.display == 'block' ? 'none' : 'block');">advanced</button>
           </td>
         </tr>
       </table>
+      <fieldset id="advanced" style="display:none">
+        <table >
+          <tr>
+            <td colspan="2">
+              <span class="description">
+                For more info on jsonschema references see the <a href="https://www.npmjs.com/package/json-ref-lite" target="_blank">json-ref-lite docs</a><br>
+                For the adapters see <a href="https://github.com/search?utf8=%E2%9C%93&q=ohmygraph+adapter" target="_blank">here</a>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Reference key</b>&nbsp:&nbsp;
+            </td>
+            <td>
+              <input type="text" id="reftoken" value="$ref"/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Jsonpointer token</b>&nbsp:&nbsp;
+            </td>
+            <td>
+              <input type="text" id="pathtoken" value="#"/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Extension key</b>&nbsp:&nbsp;
+            </td>
+            <td>
+              <input type="text" id="extendtoken" value="$extend"/>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
     </div>
     <div class="clear"></div>
   </div>
   <div class="clear"></div>
   <div class="left">
-    <h2>Your json:</h2>
-    <textarea onkeyup="lazyParse()" spellcheck="false" id="source"></textarea>
+    <h2>
+      Your OMG json:
+      <select id="template" onchange="doTemplate(this);">
+        <option value="none"></option>
+        <option selected="selected" value="github">example: github api v3</option>
+        <option value="githubextend">example: github api v3 + extend</option>
+        <option value="madeapi">example: madeapi v1.0</option>
+      </select>
+    </h2>
+    <textarea onkeyup="$('select#template').value = '';lazyParse()" spellcheck="false" id="source"></textarea>
   </div>
   <div class="right">
     <h2>▶ Exported functions</h2>
@@ -94,7 +167,12 @@
     ohmygraph = require('ohmygraph');
     th = false;
     omg = false;
-    extra = "//\n// just try the above calls in your browser console, like:\n//\n//   repositories = omg.graph.repositories;\n//   repositories.get() // <- returns array of 'repository' objects..sweet!\n//\n// also you can pass payloads like this:\n//\n//    repositories.get({sort:'asc'})\n// or using variable binding like this:\n//\n//    &lt;form onsubmit=\"repositories.get()\"&gt;\n//      &lt;input onchange=\"repositories.data.q = this.value\"/&gt;\n//    &lt;/form&gt;\n\n";
+    example = "github"
+    extra   = "";
+    adapters = {
+      'none': false,
+      'madeapi': require("ohmygraph-madeapi-adapter")
+    };
 
     function lazyParse(){
       if(th) return 
@@ -102,14 +180,29 @@
       setTimeout( function(){ clearTimeout(th);}, 500 );
     }
 
+    function doTemplate(select){
+      source = "";
+      if( templates[ select.value ] != undefined ){
+        t = templates[ select.value ]
+        if( t.json == undefined || t.extra == undefined || t.adapter == undefined ) return;
+        $('#adapterselect').value = t.adapter;
+        $('#source').value = t.json;
+        extra = t.extra;
+        parse();
+      }
+    }
+
     function parse(){
       $('#functions').innerHTML = ""
       $('#resolved').innerHTML = ""
       graph = JSON.parse( $('#source').value );
-      omg = ohmygraph.create(graph, {
-        baseurl: "https://api.github.com",
-        verbose: 2
-      });
+      adapter = $('#adapterselect').value; 
+      opts = { verbose: 2 };
+      if( adapter != 'none' ){
+        a = require("ohmygraph-"+adapter+"-adapter");
+        graph = a.parse(graph, '1.0', opts);
+      }
+      omg = ohmygraph.create(graph, opts );
       omg.init.client()
       update();
     }
@@ -125,11 +218,9 @@
       extra = "";
     }
 
-    source = $('#source');
-    json = '{\n  "repositories": {\n    "output": [\n      {\n        "$ref": "#ui.console"\n      }\n    ],\n    "type": "array",\n    "items": [\n      {\n        "$ref": "#repository"\n      }\n    ],\n    "input": {\n      "order": {\n        "type": "string",\n        "enum": [\n          "asc",\n          "desc"\n        ],\n        "value": "asc"\n      },\n      "sort": {\n        "type": "string",\n        "enum": [\n          "created",\n          "stars",\n          "updated",\n          "pushed"\n        ],\n        "value": "stars"\n      },\n      "q": {\n        "type": "string",\n        "value": "ohmygod"\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/search/repositories",\n          "payload": {\n            "q": "{repositories.input.q.value}",\n            "sort": "{repositories.input.sort.value}",\n            "order": "{repositories.input.order.value}"\n          }\n        },\n        "data": "{response.items}"\n      }\n    }\n  },\n  "repository": {\n    "type": "object",\n    "data": {},\n    "properties": {\n      "html_url": {\n        "type": "string"\n      },\n      "stargazers_count": {\n        "type": "number"\n      },\n      "owner": {\n        "type": "object",\n        "properties": {\n          "login": {\n            "type": "string"\n          }\n        }\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/repos/{repository.data.full_name}",\n          "payload": {}\n        },\n        "data": "{response}"\n      },\n      "post": {\n        "type": "request",\n        "config": {\n          "method": "post",\n          "url": "/repos/{repository.data.full_name}",\n          "payload": {\n            "full_name": "{repository.data.full_name}"\n          }\n        }\n      }\n    }\n  }\n}';
-    source.innerHTML = json
+    doTemplate( {"value":"github"} );
+    extra = templates["github"].extra;
     parse();
-
   </script>
 </body>
 </html>
