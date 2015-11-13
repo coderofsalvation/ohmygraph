@@ -1,7 +1,7 @@
 {
   "name": "ohmygraph",
-  "version": "1.0.3",
-  "description": "Isomorphic REST server and clients using jsonschema graph. Forget writing rest-interface gluecode, welcome json graph.",
+  "version": "1.0.5",
+  "description": "Easily generate a REST (graph)client from a json api-modelspecification. Like restangular/traverse/backbone/restful but more atheist-style.",
   "main": "index.js",
   "dependencies": {
     "node-fetch": "^1.3.3",
