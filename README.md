@@ -74,6 +74,7 @@ Try the [online editor](http://coderofsalvation.github.io/ohmygraph/index.html)
 * resource linking (using a graph)
 * easy to use with API's generated from json-model (just convert the model)
 * only deal with dataobjects in javascript, not with REST code
+* datamodel does not dictate api model (like backbone)
 
 # Example: combining API's
 
