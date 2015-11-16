@@ -9,6 +9,10 @@ or in the browser (6k when gzipped):
     <script type="text/javascript" src="ohmygraph.min.js"></script> 
 
 Try the [online editor](http://coderofsalvation.github.io/ohmygraph/index.html)
+
+# Video
+
+[![VIDEO](http://img.youtube.com/vi/XrE-KVrLSaI/0.jpg)](http://www.youtube.com/watch?v=XrE-KVrLSaI)
     
 # Example: github api
 

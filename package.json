@@ -1,7 +1,7 @@
 {
   "name": "ohmygraph",
-  "version": "1.0.7",
-  "description": "Easily generate a REST (graph)client from a json api-modelspecification. Like restangular/traverse/backbone/restful but more atheist-style.",
+  "version": "1.0.9",
+  "description": "Easily generate a graphs/REST-clients from json api-modelspecifications. Like restangular/traverse/backbone/restful but more atheist-style.",
   "main": "index.js",
   "dependencies": {
     "node-fetch": "^1.3.3",
