@@ -41,12 +41,14 @@
       height:100vh;
     }
     .clear { clear:both; }
-    div#adapter { width:300px; float:left }
+    .fleft { float: left; }
+    div#adapter { width:355px; float:left }
     img#logo { float:left; width:44%; }
     button,select { font-size:17px; }
     .description{ text-align:justify; color:#FFF; font-size:14px; }
     a:visited { font-weight:bold; color:#FFF }
     #advanced input { width:50px }
+    #advanced input#baseurl { width:150px }
     fieldset#advanced { background-color:#999; margin-top:1.0em; }
   </style>
   <script>
@@ -60,16 +62,19 @@
     templates["github"] = {
       "json": '{\n  "repositories": {\n    "output": [\n      {\n        "$ref": "#ui.console"\n      }\n    ],\n    "type": "array",\n    "items": [\n      {\n        "$ref": "#repository"\n      }\n    ],\n    "input": {\n      "order": {\n        "type": "string",\n        "enum": [\n          "asc",\n          "desc"\n        ],\n        "value": "asc"\n      },\n      "sort": {\n        "type": "string",\n        "enum": [\n          "created",\n          "stars",\n          "updated",\n          "pushed"\n        ],\n        "value": "stars"\n      },\n      "q": {\n        "type": "string",\n        "value": "ohmygod"\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/search/repositories",\n          "payload": {\n            "q": "{repositories.input.q.value}",\n            "sort": "{repositories.input.sort.value}",\n            "order": "{repositories.input.order.value}"\n          }\n        },\n        "data": "{response.items}"\n      }\n    }\n  },\n  "repository": {\n    "type": "object",\n    "data": {},\n    "properties": {\n      "html_url": {\n        "type": "string"\n      },\n      "stargazers_count": {\n        "type": "number"\n      },\n      "owner": {\n        "type": "object",\n        "properties": {\n          "login": {\n            "type": "string"\n          }\n        }\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/repos/{repository.data.full_name}",\n          "payload": {}\n        },\n        "data": "{response}"\n      },\n      "post": {\n        "type": "request",\n        "config": {\n          "method": "post",\n          "url": "/repos/{repository.data.full_name}",\n          "payload": {\n            "full_name": "{repository.data.full_name}"\n          }\n        }\n      }\n    }\n  }\n}',
       "adapter": "none",
-      "extra": "//\n// just try the above calls in your browser console, like:\n//\n//   repositories = omg.graph.repositories;\n//   repositories.get() // <- returns array of 'repository' objects..sweet!\n//\n// also you can pass payloads like this:\n//\n//    repositories.get({sort:'asc'})\n// or using variable binding like this:\n//\n//    &lt;form onsubmit=\"repositories.get()\"&gt;\n//      &lt;input onchange=\"repositories.data.q = this.value\"/&gt;\n//    &lt;/form&gt;\n\n"
+      "baseurl": "https://api.github.com",
+      "extra": "//\n// after calling client(), get your data like so:\n//\n//   repositories = omg.graph.repositories;\n//   repositories.on('data', function(repos){ \n//    repos.data[0].get();\n//   });\n//   repositories.get()\n//\n// this will retrieve an array of 'repository' objects\n// and get further details of the repo 0..sweet!\n//\n// also you can pass payloads like this:\n//\n//\n//    repositories.get({sort:'asc'})\n//\n// or using variable binding like this:\n//\n//    &lt;form onsubmit=\"repositories.get()\"&gt;\n//      &lt;input onchange=\"repositories.data.q = this.value\"/&gt;\n//    &lt;/form&gt;\n\n"
     }
     templates["githubextend"] = {
       "json": '{\n  "$extend":{\n    "$ref":"#/repository/request",\n    "update": {\n      "config": {\n        "method": "put",\n        "url": "https://api.github.com/search/repositories",\n        "payload": {\n          "foo": "{repositories.input.q.value}"\n        }\n      },\n      "data": "{response.items}"\n    }\n  },\n  "repositories": {\n    "output": [\n      {\n        "$ref": "#ui.console"\n      }\n    ],\n    "type": "array",\n    "items": [\n      {\n        "$ref": "#repository"\n      }\n    ],\n    "input": {\n      "order": {\n        "type": "string",\n        "enum": [\n          "asc",\n          "desc"\n        ],\n        "value": "asc"\n      },\n      "sort": {\n        "type": "string",\n        "enum": [\n          "created",\n          "stars",\n          "updated",\n          "pushed"\n        ],\n        "value": "stars"\n      },\n      "q": {\n        "type": "string",\n        "value": "ohmygod"\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/search/repositories",\n          "payload": {\n            "q": "{repositories.input.q.value}",\n            "sort": "{repositories.input.sort.value}",\n            "order": "{repositories.input.order.value}"\n          }\n        },\n        "data": "{response.items}"\n      }\n    }\n  },\n  "repository": {\n    "type": "object",\n    "data": {},\n    "properties": {\n      "html_url": {\n        "type": "string"\n      },\n      "stargazers_count": {\n        "type": "number"\n      },\n      "owner": {\n        "type": "object",\n        "properties": {\n          "login": {\n            "type": "string"\n          }\n        }\n      }\n    },\n    "request": {\n      "get": {\n        "config": {\n          "method": "get",\n          "url": "https://api.github.com/repos/{repository.data.full_name}",\n          "payload": {}\n        },\n        "data": "{response}"\n      },\n      "post": {\n        "type": "request",\n        "config": {\n          "method": "post",\n          "url": "/repos/{repository.data.full_name}",\n          "payload": {\n            "full_name": "{repository.data.full_name}"\n          }\n        }\n      }\n    }\n  }\n}\n',
+      "baseurl": "https://api.github.com",
       "adapter": "none",
       "extra": "// do you see that the 'foo'-key was moved downwards?"
     }
     templates["madeapi"] = {
       "json": '{\n  "kind": "structure",\n  "structure": {\n    "user": {\n      "table": "user",\n      "access": [\n        "read",\n        "update"\n      ],\n      "custom": {\n        "current": {\n          "read": {\n            "description": "Get current session user",\n            "method": "\\\\Foo\\\\Some\\\\Method\\\\current"\n          }\n        }\n      },\n      "required": [\n        "username"\n      ],\n      "payload": {\n        "id": {\n          "type": "integer",\n          "minimum": 1\n        },\n        "username": {\n          "type": "string",\n          "access": [\n            "create",\n            "read"\n          ]\n        }\n      },\n      "relations": {\n        "access": {\n          "resource": "access",\n          "local": "id",\n          "foreign": "user_id"\n        }\n      }\n    },\n    "access": {\n      "table": "user_access",\n      "access": [\n        "read"\n      ],\n      "required": [\n        "user",\n        "resource",\n        "foreign_id"\n      ],\n      "payload": {\n        "id": {\n          "title": {\n            "en": "id",\n            "nl": "id"\n          },\n          "description": "Identificatie nummer",\n          "function": "key",\n          "type": "integer",\n          "minimum": 1\n        },\n        "user": {\n          "description": "Gebruiker",\n          "type": "object",\n          "function": "relation",\n          "resource": "user"\n        },\n        "resource": {\n          "type": "string"\n        }\n      },\n      "relations": {\n        "user": {\n          "resource": "user",\n          "local": "user_id",\n          "foreign": "id"\n        }\n      }\n    }\n  }\n}',
       "extra": "",
+      "baseurl": "",
       "adapter": "madeapi"
     }
     
@@ -99,7 +104,9 @@
             </select>
           </td>
           <td>
-            <button onclick="var a = $('#advanced'); a.style.display = ( a.style.display == 'block' ? 'none' : 'block');">advanced</button>
+            <button class="fleft" onclick="var a = $('#advanced'); a.style.display = ( a.style.display == 'block' ? 'none' : 'block');">advanced</button>
+            <button class="fleft" onclick="var a = $('#debug'); a.style.display = ( a.style.display == 'block' ? 'none' : 'block');">debug</button>
+            <div class="clear"></div>
           </td>
         </tr>
       </table>
@@ -137,6 +144,14 @@
               <input type="text" id="extendtoken" value="$extend"/>
             </td>
           </tr>
+          <tr>
+            <td>
+              <b>Console verbosity (0..3)</b>&nbsp:&nbsp;
+            </td>
+            <td>
+              <input type="text" id="verbose" onkeyup="verbose = this.value;" value="2"/>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>
@@ -158,17 +173,24 @@
   <div class="right">
     <h2>▶ Exported graph nodes + functions</h2>
     <textarea spellcheck="false" id="functions"></textarea>
-    <h2>▶ Resolved 'rest'-object <a style='font-size:12px' href="https://www.npmjs.com/package/json-ref-lite" target="_blank">(=json-ref-lite output)</a></h2>
-    <textarea spellcheck="false" id="resolved"></textarea>
+    <button onclick="run()">run in console with baseurl</button>
+    <input type="text" id="baseurl" onkeyup="baseurl = this.value;" value="https://api.github.com"/>
+    <div id="debug" style="display:none">
+      <h2>▶ Resolved OMG-json <a style='font-size:12px' href="https://www.npmjs.com/package/json-ref-lite" target="_blank">(=json-ref-lite output)</a></h2>
+      <textarea spellcheck="false" id="resolved"></textarea>
+    </div>
   </div>
   <div class="clear"></div>
   <script>
     $ = function(str){ return document.querySelector(str); }
     ohmygraph = require('ohmygraph');
+    baseurl = '';
     th = false;
     omg = false;
+    lines = Array()
     example = "github"
     extra   = "";
+    verbose = 2;
     adapters = {
       'none': false,
       'madeapi': require("ohmygraph-madeapi-adapter")
@@ -180,13 +202,27 @@
       setTimeout( function(){ clearTimeout(th);}, 500 );
     }
 
+    function run(){
+      calls = omg.export_functions(true);
+      for( i in calls ){
+        ( function(i){
+          callobj = calls[i];
+          call = Object.keys(callobj).pop();
+          node = omg.graph[call];
+          console.log( "calling: "+call+"."+callobj[call]+"()" );
+          omg.graph[call][ callobj[call] ]();
+        })(i);
+      }
+    }
+
     function doTemplate(select){
       source = "";
       if( templates[ select.value ] != undefined ){
         t = templates[ select.value ]
-        if( t.json == undefined || t.extra == undefined || t.adapter == undefined ) return;
+        if( t.json == undefined || t.extra == undefined || t.adapter == undefined || t.baseurl == undefined ) return;
         $('#adapterselect').value = t.adapter;
         $('#source').value = t.json;
+        baseurl = t.baseurl;
         extra = t.extra;
         parse();
       }
@@ -197,7 +233,7 @@
       $('#resolved').innerHTML = ""
       graph = JSON.parse( $('#source').value );
       adapter = $('#adapterselect').value; 
-      opts = { verbose: 2 };
+      opts = { verbose: verbose, baseurl: baseurl, dry:true };
       if( adapter != 'none' ){
         a = require("ohmygraph-"+adapter+"-adapter");
         graph = a.parse(graph, '1.0', opts);
@@ -209,11 +245,10 @@
 
     function update(){
       lines = omg.export_functions().split("\n");
-      lines.pop();
       for(var i=0;i<lines.length;i++){
         lines[i] = "omg.graph."+lines[i];
       }
-      $('#functions').innerHTML = lines.join("\n")+"\n\n// this was outputted by:\n//\n//\tohmygraph = require('ohmygraph');\n//\tomg = ohmygraph.create(yourjson, {baseurl:''});\n//\tomg.export_functions()\n"+extra;
+      $('#functions').innerHTML = lines.join("\n")+"\n\n// this was outputted by:\n//\n//\tohmygraph = require('ohmygraph');\n//\tomg = ohmygraph.create(yourjson, {baseurl:''});\n//\tomg.init.client();//\tomg.export_functions()\n"+extra;
       $('#resolved').innerHTML = "// output of:\n//\tohmygraph = require('ohmygraph');\n//\tomg = ohmygraph.create(yourjson, {baseurl:''});\n//\tJSON.stringify( omg.graph,null,2);\n"+JSON.stringify( omg.graph, null, 2); 
       extra = "";
     }
