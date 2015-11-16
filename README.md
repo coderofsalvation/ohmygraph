@@ -75,6 +75,7 @@ Try the [online editor](http://coderofsalvation.github.io/ohmygraph/index.html)
 * easy to use with API's generated from json-model (just convert the model)
 * only deal with dataobjects in javascript, not with REST code
 * datamodel does not dictate api model (like backbone)
+* fully customizable webcalls using fetch, [docs here](see https://www.npmjs.com/package/whatwg-fetch)
 
 # Example: combining API's
 
@@ -120,7 +121,7 @@ yournode.trigger(event,data)
 yournode.on(event,cb)
 > register an event on your nodeyournode.on( 'foo', function(){} )
 
-yournode.clone   ()
+yournode.clone()
 > call clone() on a node to keep the original intact 
 
 get(node)
@@ -151,3 +152,4 @@ Ohmygraph is pretty much jsonbased and framework- and API-agnostic, but it was i
 
 [traverson](https://github.com/basti1302/traverson)
 > no restmapping, only linking
+
