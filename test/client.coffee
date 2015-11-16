@@ -41,10 +41,9 @@ graph =
           schema: {"$ref":"#/book"}
         data: "{response}"
 
-
 omg = ohmygraph.create graph, {baseurl: "https://api.github.com",verbose:2}
-console.log omg.export_functions()
-process.exit()
+#console.log omg.export_functions(true)
+#process.exit()
 
 omg.init.client()
 client = omg.graph

@@ -12,6 +12,7 @@ module.exports = {
 
     @.opts = opts
     @.opts.verbose = @.opts.verbose || 0
+    @.opts.dry     = @.opts.dry     || false
     @.opts.requestfunc = ( if typeof fetch is 'function' then fetch else () -> window.fetch.apply(window,arguments) )
     omg = @
 
@@ -74,15 +75,16 @@ module.exports = {
               (properties) ->
                 alert("todo") if properties?
                 #graph[node.name].data = properties if properties? and typeof properties is 'object'
-                console.dir graph[node.name] if omg.opts.verbose > 1
+                console.dir graph[node.name] if omg.opts.verbose > 2
                 req = omg.jref.evaluate omg.clone(request.config), graph
                 #( (delete req.payload[k] if not v? or v.length == 0 ) for k,v of req.payload ) if req.payload
                 req.url = req.url+"?"+querystring.stringify req.payload if req.method is 'get' and req.payload? and Object.keys(req.payload).length
                 req.url = ( if omg.opts.baseurl and not req.url.match omg.opts.baseurl then omg.opts.baseurl else '' ) + req.url
-                console.log req.method+" "+req.url if omg.opts.verbose > 0
+                console.log node.name+"."+methodtype+"() "+req.method+" "+req.url if omg.opts.verbose > 0
                 console.dir req if omg.opts.verbose > 1
                 opts = {method:req.method}
                 opts.body = JSON.stringify req.payload if req.method is not 'get'
+                return if omg.opts.dry 
                 omg.opts.requestfunc req.url, opts
                 .then( (res) -> res.json() )
                 .then( (json) ->
@@ -111,15 +113,18 @@ module.exports = {
 
     # dump client functions as string or array
     @.export_functions = (return_array_boolean) ->
-      str = ''
+      result = [] ; str = ''
       for name,node of omg.graph
         if node.request?
           for k,v of node.request
             if v.config?
-              str += name+"."+k+"()\n"
+              obj = {} ; obj[name] = k
+              result.push obj 
+              str += "\n"+name+"."+k+"()"
       if return_array_boolean
-        return str.replace( /()\n/g, "\n").split("\n")
-      else return str
+        return result
+      else 
+        return str.substr(1, str.length-1)
 
     # resolve "$ref" references in graph
     @.resolve = () ->

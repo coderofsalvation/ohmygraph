@@ -21,6 +21,7 @@
       this.jref = jref;
       this.opts = opts;
       this.opts.verbose = this.opts.verbose || 0;
+      this.opts.dry = this.opts.dry || false;
       this.opts.requestfunc = (typeof fetch === 'function' ? fetch : function() {
         return window.fetch.apply(window, arguments);
       });
@@ -123,7 +124,7 @@
                   if (properties != null) {
                     alert("todo");
                   }
-                  if (omg.opts.verbose > 1) {
+                  if (omg.opts.verbose > 2) {
                     console.dir(graph[node.name]);
                   }
                   req = omg.jref.evaluate(omg.clone(request.config), graph);
@@ -132,7 +133,7 @@
                   }
                   req.url = (omg.opts.baseurl && !req.url.match(omg.opts.baseurl) ? omg.opts.baseurl : '') + req.url;
                   if (omg.opts.verbose > 0) {
-                    console.log(req.method + " " + req.url);
+                    console.log(node.name + "." + methodtype + "() " + req.method + " " + req.url);
                   }
                   if (omg.opts.verbose > 1) {
                     console.dir(req);
@@ -142,6 +143,9 @@
                   };
                   if (req.method === !'get') {
                     opts.body = JSON.stringify(req.payload);
+                  }
+                  if (omg.opts.dry) {
+                    return;
                   }
                   return omg.opts.requestfunc(req.url, opts).then(function(res) {
                     return res.json();
@@ -193,7 +197,8 @@
         return node.bindrequests(node);
       };
       this.export_functions = function(return_array_boolean) {
-        var k, name, node, ref, ref1, str, v;
+        var k, name, node, obj, ref, ref1, result, str, v;
+        result = [];
         str = '';
         ref = omg.graph;
         for (name in ref) {
@@ -203,15 +208,18 @@
             for (k in ref1) {
               v = ref1[k];
               if (v.config != null) {
-                str += name + "." + k + "()\n";
+                obj = {};
+                obj[name] = k;
+                result.push(obj);
+                str += "\n" + name + "." + k + "()";
               }
             }
           }
         }
         if (return_array_boolean) {
-          return str.replace(/()\n/g, "\n").split("\n");
+          return result;
         } else {
-          return str;
+          return str.substr(1, str.length - 1);
         }
       };
       this.resolve = function() {
